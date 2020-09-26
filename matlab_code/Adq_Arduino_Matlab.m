@@ -10,7 +10,7 @@ pause(3)
 fwrite(puerto_serial,'a')
 
 Fs=1000;
-N=2000;%N=duracion/Fs
+N=2000; %N=duracion/Fs
 y=zeros(N,1);
 t=linspace(0,((N-1)/Fs),N);
 l1=line(nan,nan,'Color','r','LineWidth',2);
