@@ -1,44 +1,54 @@
+# Real-time data acquisition from Arduino over serial
+# Author: Gilberto Garcia
+
 import time
 import serial
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.fftpack import fft
-from G5libs import G5tictoc , G5math
+from G5libs import G5tictoc
 
-tictoc=G5tictoc.Timer()
-fig=plt.figure()
+# --- Config ---
+PORT = 'COM4'       # change to your port (e.g. '/dev/ttyUSB0' on Linux)
+BAUD = 115200
+N = 1024            # total number of samples to display
+Fs = 1000           # sampling frequency in Hz — must match Arduino delay
 
-serial=serial.Serial('COM4', 115200)#9600
-time.sleep(3)
-serial.write("a")
+# --- Setup serial and timer ---
+tictoc = G5tictoc.Timer()
+fig = plt.figure()
 
-N = 1024
-Fs = 1000
-i=0
-y=np.zeros(N)
-t=np.linspace(0,((N-1)/Fs),N)
+ser = serial.Serial(PORT, BAUD)
+time.sleep(3)               # wait for Arduino to reset after serial connect
+ser.write("a".encode())     # send trigger to start transmission
 
+# --- Initialize buffer and time axis ---
+i = 0
+y = np.zeros(N)
+t = np.linspace(0, (N - 1) / Fs, N)
 
+# --- Setup real-time plot ---
 graf, = plt.plot(t, y)
 plt.setp(graf, color='r', linewidth=2.0)
-plt.axis([0,(N-1)/Fs,-0.1, 1024])
+plt.axis([0, (N - 1) / Fs, -0.1, 1024])
 plt.title('Real Time DAQ')
-plt.xlabel('Tiempo (t)')
-plt.ylabel('Voltaje (V)')
+plt.xlabel('Time (s)')
+plt.ylabel('Voltage (V)')
 fig.canvas.draw()
 plt.show(block=False)
 
+# --- Acquisition loop ---
+# Reads one sample per 1/Fs seconds
+# Sliding window: shifts buffer left and appends new sample at the end
 tictoc.tic()
-
-while i<N:
-    if tictoc.toc() >= 1.0/Fs:
+while i < N:
+    if tictoc.toc() >= 1.0 / Fs:
         tictoc.tic()
-        while serial.inWaiting() > 0:
-            dato=serial.readline()
-        y[0:-1] = y[1:]
-        y[len(y)-1]=float(dato)
-        i+=1
+        while ser.inWaiting() > 0:  # flush buffer, keep only latest value
+            dato = ser.readline()
+        y[0:-1] = y[1:]             # shift buffer left
+        y[-1] = float(dato)         # append new sample
+        i += 1
         graf.set_ydata(y)
-        fig.canvas.draw() 
+        fig.canvas.draw()
 
-serial.close()
+ser.close()

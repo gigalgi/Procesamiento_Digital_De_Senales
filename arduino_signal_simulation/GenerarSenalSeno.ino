@@ -1,28 +1,26 @@
+// Sine wave signal generator for serial transmission
+// Author: Gilberto Garcia
+// Generates a sine wave and sends 512 samples over serial per trigger
+// Increments frequency by 50 Hz on each trigger for multi-frequency testing
 
-double pi=3.14159265359;
-double f=50,sen;
-double t=0;
-// the setup routine runs once when you press reset:
+double pi = 3.14159265359;
+double f = 50;    // starting frequency in Hz
+double sen;
+double t = 0;
+
 void setup() {
-  // initialize serial communication at 9600 bits per second:
   Serial.begin(9600);
 }
 
-// the loop routine runs over and over again forever:
 void loop() {
-  
- while(Serial.available()){
-  for(int i=0;i<=512;i++){
-    delay(1);
-    sen=1023*sin(2*pi*f*t);
-    Serial.println(sen);
-  
-    t+=0.001 ;
+  while (Serial.available()) {        // wait for trigger from Python
+    for (int i = 0; i <= 512; i++) {
+      delay(1);                       // 1ms delay = 1kHz effective sample rate
+      sen = 1023 * sin(2 * pi * f * t);
+      Serial.println(sen);
+      t += 0.001;
+    }
+    f += 50;    // increment frequency for next burst
+    t = 0;      // reset time for clean sine wave
   }
-
-  f+=50;
-  t=0;
-  // delay in between reads for stability
-}
-
 }
