@@ -1,5 +1,5 @@
 # Real-time data acquisition + FFT analysis from Arduino
-# Author: Gilberto Garcia
+# Author: Gilberto Galvis
 
 import time
 import serial

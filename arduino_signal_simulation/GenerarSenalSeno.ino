@@ -1,5 +1,5 @@
 // Sine wave signal generator for serial transmission
-// Author: Gilberto Garcia
+// Author: Gilberto Galvis
 // Generates a sine wave and sends 512 samples over serial per trigger
 // Increments frequency by 50 Hz on each trigger for multi-frequency testing
 

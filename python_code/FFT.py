@@ -1,5 +1,5 @@
 # Standalone FFT demo — no hardware needed
-# Author: Gilberto Garcia
+# Author: Gilberto Galvis
 # Use this to understand the FFT output before connecting real hardware
 
 import numpy as np

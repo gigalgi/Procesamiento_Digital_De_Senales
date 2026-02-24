@@ -1,5 +1,5 @@
 # Real-time data acquisition from Arduino over serial
-# Author: Gilberto Garcia
+# Author: Gilberto Galvis
 
 import time
 import serial
